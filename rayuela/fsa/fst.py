@@ -83,7 +83,7 @@ class FST(FSA):
                     continue
                 yield ab, j, w
 
-    def spawn(self, keep_init: bool = False, keep_final: bool = False) -> "FST":
+    def spawn(self, keep_init: bool = False, keep_final: bool = False):
         """returns a new FST in the same semiring"""
         F = FST(R=self.R)
 
@@ -108,7 +108,7 @@ class FST(FSA):
             else:
                 return ε_1, b
 
-    def augment_epsilon_transitions(self, idx: int) -> "FST":
+    def augment_epsilon_transitions(self, idx: int):
         """Augments the FST by changing the appropriate epsilon transitions to
         epsilon_1 or epsilon_2 transitions to be able to perform the composition
         with epsilon transitions correctly.
@@ -142,7 +142,7 @@ class FST(FSA):
 
         return T
 
-    def get_epsilon_filter(R, Sigma) -> FST:
+    def get_epsilon_filter(R, Sigma):
         """Returns the epsilon filtered FST required for the correct composition of WFSTs
         with epsilon transitions.
         
