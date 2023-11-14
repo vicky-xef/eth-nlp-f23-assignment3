@@ -82,6 +82,25 @@ class FST(FSA):
                 if w == self.R.zero:
                     continue
                 yield ab, j, w
+    
+    def reverse(self):
+        """creates a reversed machine"""
+
+        # create the new machine
+        Tr = self.spawn()
+
+        # add the arcs in the reversed machine
+        for i in self.Q:
+            for (a, b), j, w in self.arcs(i):
+                Tr.add_arc(j, a, b, i, w)
+
+        # reverse the initial and final states
+        for q, w in self.I:
+            Tr.set_F(q, w)
+        for q, w in self.F:
+            Tr.set_I(q, w)
+
+        return Tr
 
     def spawn(self, keep_init: bool = False, keep_final: bool = False):
         """returns a new FST in the same semiring"""
