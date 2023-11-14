@@ -144,37 +144,6 @@ class FSA:
         return self.reverse().accessible()
 
 
-    def trim(self):
-        """trims the machine"""
-
-        # compute accessible and co-accessible arcs
-        A, C = self.accessible(), self.coaccessible()
-        AC = A.intersection(C)
-
-        # create a new F with only the pruned arcs
-        T = self.spawn()
-        for i in AC:
-            if isinstance(self, FST):
-                for (a, b), j, w in self.arcs(i):
-                    if j in AC:
-                        T.add_arc(i, a, b, j, w)
-            else:
-                for a, j, w in self.arcs(i):
-                    if j in AC:
-                        T.add_arc(i, a, j, w)
-
-        # add initial state
-        for q, w in self.I:
-            if q in AC:
-                T.set_I(q, w)
-
-        # add final state
-        for q, w in self.F:
-            if q in AC:
-                T.set_F(q, w)
-
-        return T
-
     @property
     def I(self) -> Generator[Tuple[State, Semiring], None, None]:
         for q, w in self.λ.items():
