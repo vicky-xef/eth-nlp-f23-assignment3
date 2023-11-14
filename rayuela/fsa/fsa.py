@@ -143,18 +143,6 @@ class FSA:
         """computes the set of co-accessible states"""
         return self.reverse().accessible()
 
-    def _add_trim_arcs(F, T, AC):
-        for i in AC:
-            if isinstance(F, FST):
-                for (a, b), j, w in F.arcs(i):
-                    if j in AC:
-                        T.add_arc(i, a, b, j, w)
-
-            else:
-                for a, j, w in F.arcs(i):
-                    if j in AC:
-                        T.add_arc(i, a, j, w)
-
 
     def trim(self):
         """trims the machine"""
