@@ -115,6 +115,32 @@ class FST(FSA):
 
         return F
     
+    def trim(self):
+        """trims the machine"""
+
+        # compute accessible and co-accessible arcs
+        A, C = self.accessible(), self.coaccessible()
+        AC = A.intersection(C)
+
+        # create a new F with only the pruned arcs
+        T = self.spawn()
+        for i in AC:
+            for (a, b), j, w in self.arcs(i):
+                if j in AC:
+                    T.add_arc(i, a, b, j, w)
+
+        # add initial state
+        for q, w in self.I:
+            if q in AC:
+                T.set_I(q, w)
+
+        # add final state
+        for q, w in self.F:
+            if q in AC:
+                T.set_F(q, w)
+
+        return T
+    
     def _transform_arc(self, q: State, a: Sym, b: Sym, j: State, w, idx: int):
         if idx == 1:
             if b != ε:
