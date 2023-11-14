@@ -96,7 +96,7 @@ class FST(FSA):
 
         return F
     
-    def _transform_arc(self, q: State, a: Sym, b: Sym, j: State, w: Semiring, idx: int):
+    def _transform_arc(self, q: State, a: Sym, b: Sym, j: State, w, idx: int):
         if idx == 1:
             if b != ε:
                 return a, b
@@ -142,7 +142,7 @@ class FST(FSA):
 
         return T
 
-    def get_epsilon_filter(R: Type[Semiring], Sigma: Alphabet) -> FST:
+    def get_epsilon_filter(R, Sigma) -> FST:
         """Returns the epsilon filtered FST required for the correct composition of WFSTs
         with epsilon transitions.
         
