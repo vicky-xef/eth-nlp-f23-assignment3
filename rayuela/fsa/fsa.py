@@ -126,6 +126,67 @@ class FSA:
         self.λ = frozendict(self.λ)
         self.ρ = frozendict(self.ρ)
 
+    def accessible(self):
+        """computes the set of accessible states"""
+        A = set()
+        stack = [q for q, w in self.I if w != self.R.zero]
+        while stack:
+            i = stack.pop()
+            for _, j, _ in self.arcs(i):
+                if j not in A:
+                    stack.append(j)
+            A.add(i)
+
+        return A
+
+    def coaccessible(self):
+        """computes the set of co-accessible states"""
+        return self.reverse().accessible()
+
+    def _add_trim_arcs(F, T, AC):
+        for i in AC:
+            if isinstance(F, FST):
+                for (a, b), j, w in F.arcs(i):
+                    if j in AC:
+                        T.add_arc(i, a, b, j, w)
+
+            else:
+                for a, j, w in F.arcs(i):
+                    if j in AC:
+                        T.add_arc(i, a, j, w)
+
+
+    def trim(self):
+        """trims the machine"""
+
+        # compute accessible and co-accessible arcs
+        A, C = self.accessible(), self.coaccessible()
+        AC = A.intersection(C)
+
+        # create a new F with only the pruned arcs
+        T = self.spawn()
+        for i in AC:
+            if isinstance(self, FST):
+                for (a, b), j, w in self.arcs(i):
+                    if j in AC:
+                        T.add_arc(i, a, b, j, w)
+            else:
+                for a, j, w in self.arcs(i):
+                    if j in AC:
+                        T.add_arc(i, a, j, w)
+
+        # add initial state
+        for q, w in self.I:
+            if q in AC:
+                T.set_I(q, w)
+
+        # add final state
+        for q, w in self.F:
+            if q in AC:
+                T.set_F(q, w)
+
+        return T
+
     @property
     def I(self) -> Generator[Tuple[State, Semiring], None, None]:
         for q, w in self.λ.items():
